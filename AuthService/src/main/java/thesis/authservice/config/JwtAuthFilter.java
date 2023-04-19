@@ -6,10 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import thesis.authservice.exceptions.ApiError;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -34,7 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             } catch (RuntimeException e) {
 
                 SecurityContextHolder.clearContext();
-                throw  e;
+                throw new ApiError(HttpStatus.UNAUTHORIZED, "USER UNAUTHORIZED", new ArrayList<>());
             }
         }
 

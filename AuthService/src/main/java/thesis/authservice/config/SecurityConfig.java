@@ -1,14 +1,17 @@
 package thesis.authservice.config;
 
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import thesis.authservice.exceptionHandler.ControllerAdvice;
 
 @RequiredArgsConstructor
 @Configuration
@@ -16,11 +19,14 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    private UserAuthenticationEntryPoint userAuthenticationEntryPoint;
+    @Autowired
+    private ControllerAdvice controllerAdvice;
 
     @Autowired
-    private UserAuthProvider userAuthenticationProvider;
+    private UserAuthenticationEntryPoint userAuthenticationEntryPoint;
+
+    @Autowired
+    private UserAuthProvider userAuthProvider;
 
 
     @Bean
@@ -29,10 +35,10 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                        .requestMatchers("/swagger-ui/**", "/login", "/register",
-                "/reset", "/reset/password", "/recommendation/api-docs/**")
+                .requestMatchers("/swagger-ui/**", "/auth/login", "/auth/register",
+                        "/reset", "/reset/password", "/recommendation/api-docs/**", "/auth/validate", "/auth/{id}")
                 .permitAll()
-                .requestMatchers("/google/sign-in")
+                .requestMatchers("/auth/google/sign-in")
                 .authenticated().and()
                 .oauth2Login()
                 .and()
@@ -41,10 +47,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class);
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-
         return http.build();
+
     }
 }

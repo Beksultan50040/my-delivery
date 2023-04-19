@@ -1,0 +1,16 @@
+  http
+
+                .csrf().disable()
+                .authorizeHttpRequests()
+                        .requestMatchers("/auth/google/sign-in")
+                .authenticated().and()
+                .oauth2Login().loginPage("/auth/google/sign-in")
+                .and().authorizeHttpRequests()
+                        .requestMatchers("/swagger-ui/**", "/auth/login", "/auth/register",
+                "/reset", "/reset/password", "/recommendation/api-docs/**", "/auth/validate")
+                        .permitAll()
+                        .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint).and()
+                .addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class);
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
