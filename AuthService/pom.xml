@@ -79,10 +79,10 @@
 			<version>0.11.5</version>
 		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
@@ -152,6 +152,19 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<from>
+						<image>openjdk:17-jdk-alpine3.13</image>
+					</from>
+					<to>
+						<image>registry.hub.docker.com/50040/auth-service</image>
+					</to>
 				</configuration>
 			</plugin>
 		</plugins>

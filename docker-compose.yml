@@ -1,0 +1,112 @@
+version: '3.7'
+services:
+  ## PostgreSQL Docker Compose Config
+  postgres-auth:
+    container_name: postgres-auth
+    image: postgres
+    environment:
+      POSTGRES_DB: auth-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 50040
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-auth:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
+  postgres-restaurant:
+    container_name: postgres-restaurant
+    image: postgres
+    environment:
+      POSTGRES_DB: restaurant-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 50040
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-restaurant:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: always
+
+  postgres-order:
+    container_name: postgres-order
+    image: postgres
+    environment:
+      POSTGRES_DB: order-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 50040
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-order:/data/postgres
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    command: -p 5433
+    restart: always
+
+  ## Eureka Server
+  eureka-server:
+    image: 50040/eureka-server:latest
+    container_name: eureka-server
+    pull_policy: always
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  api-gateway:
+    image: 50040/api-gateway:latest
+    container_name: api-gateway
+    pull_policy: always
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+
+  ## Auth-Service Docker Compose Config
+  auth-service:
+    image: 50040/auth-service:latest
+    container_name: auth-service
+    pull_policy: always
+    ports:
+      - "8081:8081"
+    expose:
+      - "8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-auth:5431/auth-service
+    depends_on:
+      - postgres-auth
+      - eureka-server
+  ## Restaurant-Service Docker Compose Config
+  restaurant-service:
+    image: 50040/restaurant-service:latest
+    container_name: restaurant-service
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-restaurant:5432/restaurant-service
+    depends_on:
+      - postgres-restaurant
+      - eureka-server
+
+  ## Order-Service Docker Compose Config
+  order-service:
+    image: 50040/order-service:latest
+    container_name: order-service
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5433/order-service
+    depends_on:
+      - postgres-order
+      - eureka-server
