@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import thesis.orderservice.entities.UserData;
 
-@FeignClient(name = "test", url = "http://localhost:8081/auth")
+@FeignClient(name = "test", url = "http://AUTH-SERVICE:8081/auth")
 public interface UserFeign {
 
     @GetMapping("/{id}")

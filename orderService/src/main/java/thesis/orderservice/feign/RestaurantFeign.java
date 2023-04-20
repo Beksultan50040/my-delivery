@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import thesis.orderservice.dto.Restaurant;
 
-@FeignClient(name = "test", url = "http://localhost:8082/restaurant")
+@FeignClient(name = "test", url = "http://RESTAURANT-SERVICE:8082/restaurant")
 public interface RestaurantFeign {
 
     @GetMapping("/{id}")
