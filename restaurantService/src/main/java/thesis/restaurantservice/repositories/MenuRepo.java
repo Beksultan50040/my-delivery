@@ -5,5 +5,4 @@ import thesis.restaurantservice.entities.Menu;
 
 public interface MenuRepo extends JpaRepository<Menu, Long> {
 
-
 }
